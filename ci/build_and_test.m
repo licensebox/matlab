@@ -16,14 +16,14 @@ function build_and_test()
   copyfile(['build/licensebox_mex.' mexext],['build/package/licensebox_mex.' mexext]);
   copyfile('LICENSE','build/package/LICENSE');
   assert(strcmp(mexext,'mexa64'),'licensebox:ci','Only Linux x86-64 packaging has been validated');
-  [code,output]=system('tar -czf build/licensebox-matlab-0.1.0.tar.gz -C build/package Licensebox.m licensebox_mex.mexa64 LICENSE');
+  [code,output]=system('tar -czf build/licensebox-matlab-0.2.0.tar.gz -C build/package Licensebox.m licensebox_mex.mexa64 LICENSE');
   assert(code==0,'licensebox:ci','SDK executable package creation failed: %s',output);
   installed_consumer(root);
 end
 function installed_consumer(root)
   destination=tempname;mkdir(destination);
   cleanup=onCleanup(@()restore_source(root,destination));
-  untar(fullfile(root,'build','licensebox-matlab-0.1.0.tar.gz'),destination);
+  untar(fullfile(root,'build','licensebox-matlab-0.2.0.tar.gz'),destination);
   clear Licensebox licensebox_mex;
   rmpath(fullfile(root,'src'),fullfile(root,'build'));
   addpath(destination,'-begin');
