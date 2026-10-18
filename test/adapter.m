@@ -22,6 +22,9 @@ function v=run(r)
     case 'lease',v=c.lease();
     case 'require',m='core';if isfield(r,'module'),m=r.module;end;v=c.require(m);
     case 'repeat',c.require('core');v=c.require('core');
+    case 'heartbeat',m='core';if isfield(r,'module'),m=r.module;end;v=c.heartbeat(m);
+    case 'heartbeat-repeat',c.heartbeat('core');v=c.heartbeat('core');
+    case 'heartbeat-after-require',c.require('core');v=c.heartbeat('core');
     case 'status',v=c.status();
     case 'sign_in',v=c.signIn(3);
     case 'logout',v=c.logout();

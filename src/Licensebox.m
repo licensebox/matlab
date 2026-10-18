@@ -20,6 +20,7 @@ classdef Licensebox < handle
     end
     function delete(self),self.close();end
     function v=lease(self),v=self.call('lease',struct());end
+    function v=heartbeat(self,module),v=self.call('heartbeat',struct('module',module));end
     function v=require(self,module),v=self.call('require',struct('module',module));end
     function v=status(self),v=self.call('status',struct());end
     function v=signIn(self,timeout),if nargin<2,timeout=0;end;v=self.call('sign_in',struct('timeout',timeout));end

@@ -63,7 +63,7 @@ def main():
         framing = run_child([sys.executable, str(Path(__file__).with_name("ipc_transport_test.py"))], 30)
         if framing:
             raise RuntimeError("negative IPC transport checks failed")
-        for suite in ("run.py", "mex_strings.py"):
+        for suite in ("run.py", "mex_strings.py", "heartbeat.py"):
             script = protocol / "conformance" / suite
             if not script.is_file():
                 raise FileNotFoundError("shared conformance suite is missing: " + suite)

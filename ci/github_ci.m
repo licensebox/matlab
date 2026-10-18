@@ -9,6 +9,7 @@ function github_ci()
   if isempty(protocol),protocol=fullfile(fileparts(root),'protocol');end
   assert(isfile(fullfile(protocol,'conformance','run.py')),'licensebox:ci','Missing shared protocol checkout');
   assert(isfile(fullfile(protocol,'conformance','mex_strings.py')),'licensebox:ci','Missing shared MEX regression');
+  assert(isfile(fullfile(protocol,'conformance','heartbeat.py')),'licensebox:ci','Missing shared heartbeat regression');
   ipc=tempname;mkdir(ipc);log=fullfile(root,'build','matlab-conformance.log');
   args={python,fullfile(root,'test','ipc_driver.py'),ipc,protocol};
   command=javaArray('java.lang.String',numel(args));
@@ -51,8 +52,8 @@ function github_ci()
     assert(status==0,'licensebox:ci','Shared suite driver failed (exit %d)',status);
     completed=fullfile(ipc,'finished.json');assert(isfile(completed),'licensebox:ci','Missing driver completion marker');
     result=jsondecode(fileread(completed));
-    assert(isstruct(result)&&isfield(result,'ok')&&isequal(result.ok,true)&&isfield(result,'suites')&&result.suites==2&&isfield(result,'exit_code')&&result.exit_code==0,'licensebox:ci','Shared suites did not complete successfully');
-    fprintf('PASS: single-session MATLAB CI (fresh clients, real persistence, 69 shared checks and MEX strings)\n');
+    assert(isstruct(result)&&isfield(result,'ok')&&isequal(result.ok,true)&&isfield(result,'suites')&&result.suites==3&&isfield(result,'exit_code')&&result.exit_code==0,'licensebox:ci','Shared suites did not complete successfully');
+    fprintf('PASS: single-session MATLAB CI (fresh clients, real persistence, 69 shared checks, MEX strings and heartbeat)\n');
   catch failure
     write_atomic(fullfile(ipc,'fatal'),failure.identifier);
     if isfile(log),fprintf('%s',fileread(log));end

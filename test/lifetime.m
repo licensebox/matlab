@@ -5,6 +5,9 @@ function lifetime()
  assert(strcmp(expected,Licensebox.deriveBinding('demo','linux-machine-id',[raw char(0)])));
  try,Licensebox.deriveBinding('demo','linux-machine-id',[raw char(0) 'extra']);error('embedded NUL accepted');catch e,assert(strcmp(e.identifier,'licensebox:identity_unavailable'));end
  for i=1:100,c=Licensebox('demo',struct('test_key','A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg'),'directory',d);c.close();end
- c=Licensebox('demo',struct('test_key','A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg'),'directory',d);c.close();
+ c=Licensebox('demo',struct('test_key','A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg'),'directory',d);
+ try,c.heartbeat('core');error('heartbeat accepted missing lease');catch e,assert(strcmp(e.identifier,'licensebox:not_signed_in'));end
+ c.close();
+ try,c.heartbeat('core');error('closed heartbeat accepted');catch e,assert(strcmp(e.identifier,'licensebox:closed'));end
  try,c.status();error('closed client accepted');catch e,assert(strcmp(e.identifier,'licensebox:closed'));end
 end
