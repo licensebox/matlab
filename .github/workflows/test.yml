@@ -7,6 +7,6 @@ permissions:
   contents: read
 jobs:
   conformance:
-    uses: licensebox/protocol/.github/workflows/sdk.yml@732f7230fc7364da14ff681f2ab2867d818f668d
+    uses: licensebox/protocol/.github/workflows/sdk.yml@83ef554088c8e888c4b161d5506859f7c281b606
     with:
       language: matlab
