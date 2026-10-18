@@ -12,3 +12,6 @@ build/
 dist-newstyle/
 *.mex*
 *.d
+
+__pycache__/
+*.py[cod]
