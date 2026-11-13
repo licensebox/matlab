@@ -5,10 +5,10 @@ classdef Licensebox < handle
   methods
     function self=Licensebox(product,keys,varargin)
       p=inputParser;
-      addParameter(p,'version','');addParameter(p,'server','');addParameter(p,'directory','');addParameter(p,'ca_bundle','');
+      addParameter(p,'version','');addParameter(p,'server','');addParameter(p,'directory','');addParameter(p,'ca_bundle','');addParameter(p,'enrol_token','');
       addParameter(p,'on_sign_in',[]);addParameter(p,'clock',[]);addParameter(p,'machine_binding',[]);addParameter(p,'cancelled',[]);
       parse(p,varargin{:});v=p.Results;options=struct('product',product,'keys',keys,'version',v.version);
-      names={'server','directory','ca_bundle'};for i=1:numel(names),n=names{i};if ~isempty(v.(n)),options.(n)=v.(n);end,end
+      names={'server','directory','ca_bundle','enrol_token'};for i=1:numel(names),n=names{i};if ~isempty(v.(n)),options.(n)=v.(n);end,end
       callbacks={v.on_sign_in,v.clock,v.machine_binding,v.cancelled};
       for i=1:4,if ~isempty(callbacks{i})&&~isa(callbacks{i},'function_handle'),error('licensebox:invalid_argument','Callbacks must be function handles');end,end
       if ischar(keys),keyJSON=keys;else,keyJSON=jsonencode(keys);end
@@ -29,6 +29,11 @@ classdef Licensebox < handle
     function v=requests(self),v=self.call('requests',struct());end
     function v=requestAccess(self,names,note),if nargin<3,note='';end;v=self.call('request',struct('modules',{names},'note',note));end
     function v=accessLink(self),v=self.call('access-link',struct());end
+    % Service accounts and floating copies: require checks a floating module out
+    % by itself; 'enrol_token' (else LICENSEBOX_ENROL_TOKEN) enrols on first lease.
+    function v=enrol(self,token),v=self.call('enrol',struct('token',token));end
+    function v=checkout(self,module),v=self.call('checkout',struct('module',module));end
+    function v=checkin(self,names),if nargin<2,names={};end;v=self.call('checkin',struct('modules',{names}));end
     function v=record(self,command,success,elapsed),v=self.call('record',struct('command',command,'success',logical(success),'elapsed',elapsed));end
   end
   methods (Access=private)

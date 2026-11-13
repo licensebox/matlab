@@ -7,7 +7,7 @@ function adapter()
     prefix='licensebox:';
     if strncmp(e.identifier,prefix,length(prefix)),a=struct('ok',false,'error',e.identifier(length(prefix)+1:end));else,rethrow(e);end
   end
-  out=jsonencode(a);if any(strcmp(r.op,{'logout','record'})),out=strrep(out,'"value":[]','"value":null');end;fprintf('%s\n',out);
+  out=jsonencode(a);if any(strcmp(r.op,{'logout','record','checkin'})),out=strrep(out,'"value":[]','"value":null');end;fprintf('%s\n',out);
 end
 function v=run(r)
   switch r.op
@@ -16,6 +16,7 @@ function v=run(r)
     case 'verify',v=Licensebox.verifyLease(r.token,r.product,r.keys,r.now);return;
   end
   args={};if isfield(r,'ca_bundle'),args={'ca_bundle',r.ca_bundle};end
+  if isfield(r,'enrol_token'),args=[args,{'enrol_token',r.enrol_token}];end
   c=Licensebox(r.product,r.keys,'server',r.server,'directory',r.directory,'version','conformance','clock',@()r.now,'machine_binding',@()r.binding,'on_sign_in',@(url,code)[],args{:});
   cleanup=onCleanup(@()c.close());
   switch r.op
@@ -32,6 +33,9 @@ function v=run(r)
     case 'requests',v=c.requests();
     case 'request',v=c.requestAccess({'export'},'café – test');
     case 'access-link',v=c.accessLink();
+    case 'enrol',v=c.enrol(r.token);
+    case 'checkout',v=c.checkout(r.module);
+    case 'checkin',c.checkin({r.module});v=[];
     case 'record',c.record('export',true,.125);c.record('export',false,.025);v=[];
     otherwise,error('unknown operation');
   end
